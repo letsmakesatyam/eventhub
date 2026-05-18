@@ -34,7 +34,7 @@ router.get('/:id', authenticate, async (req, res) => {
         *,
         events (id, title, event_date, end_date, location, venue, image_url, category, description),
         registrations (status, amount_paid, confirmed_at),
-        users (name, email)
+        users!user_id (name, email)
       `)
       .eq('id', req.params.id);
 
@@ -84,7 +84,7 @@ router.post('/validate', authenticate, requireAdmin, async (req, res) => {
       .select(`
         *,
         events (id, title, event_date, location),
-        users (id, name, email)
+        users!user_id (id, name, email)
       `)
       .eq('id', ticketId)
       .single();
@@ -141,7 +141,7 @@ router.get('/event/:eventId', authenticate, requireAdmin, async (req, res) => {
       .from('tickets')
       .select(`
         *,
-        users (id, name, email),
+        users!user_id (id, name, email),
         registrations (amount_paid, confirmed_at)
       `)
       .eq('event_id', req.params.eventId)
