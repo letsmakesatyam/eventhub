@@ -25,7 +25,7 @@ const TicketCard = ({ ticket }) => {
       <div className="p-5 sm:p-6">
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-gray-900 text-base leading-tight mb-1 truncate">{event?.title}</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white text-base leading-tight mb-1 truncate">{event?.title}</h3>
             <span className={`badge ${color} font-medium`}>
               <Icon className="w-3 h-3" /> {label}
             </span>
@@ -107,8 +107,8 @@ export const MyTicketsPage = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animate-fade-in">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">My Tickets</h1>
-        <p className="text-gray-500">Your registered events and digital tickets</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">My Tickets</h1>
+        <p className="text-gray-500 dark:text-slate-400">Your registered events and digital tickets</p>
       </div>
 
       {waking && (
@@ -132,8 +132,8 @@ export const MyTicketsPage = () => {
           <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Ticket className="w-8 h-8 text-gray-400" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No tickets yet</h3>
-          <p className="text-gray-500 mb-6">Register for an event to get your digital tickets here</p>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No tickets yet</h3>
+          <p className="text-gray-500 dark:text-slate-400 mb-6">Register for an event to get your digital tickets here</p>
           <Link to="/events" className="btn-primary inline-flex items-center gap-2">
             Browse Events
           </Link>

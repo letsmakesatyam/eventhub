@@ -10,7 +10,7 @@ const router = express.Router();
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
-    const userRole = role === 'organizer' ? 'organizer' : 'user';
+    const userRole = role === 'organizer' ? 'admin' : 'user';
 
     if (!name || !email || !password) {
       return res.status(400).json({ error: 'Name, email, and password are required' });

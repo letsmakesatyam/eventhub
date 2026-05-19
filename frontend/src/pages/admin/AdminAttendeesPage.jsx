@@ -59,12 +59,12 @@ export const AdminAttendeesPage = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animate-fade-in">
       <div className="flex items-center gap-4 mb-8">
-        <Link to="/admin/revenue" className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
+        <Link to="/admin/revenue" className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+          <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-slate-400" />
         </Link>
         <div className="flex-1">
-          <h1 className="text-3xl font-bold text-gray-900">Attendees</h1>
-          <p className="text-gray-500 mt-1">{confirmed} confirmed · {checkedIn} checked in</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Attendees</h1>
+          <p className="text-gray-500 dark:text-slate-400 mt-1">{confirmed} confirmed · {checkedIn} checked in</p>
         </div>
         <button onClick={exportCSV} className="btn-secondary flex items-center gap-2 text-sm">
           <Download className="w-4 h-4" /> Export CSV
@@ -81,20 +81,20 @@ export const AdminAttendeesPage = () => {
         />
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-100 bg-gray-50/50">
-                <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wide">Attendee</th>
-                <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</th>
-                <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wide">Paid</th>
-                <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wide">Ticket</th>
-                <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wide">Checked In</th>
-                <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wide">Registered</th>
+              <tr className="border-b border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50">
+                <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide">Attendee</th>
+                <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide">Status</th>
+                <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide">Paid</th>
+                <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide">Ticket</th>
+                <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide">Checked In</th>
+                <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide">Registered</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-gray-50 dark:divide-slate-800">
               {loading ? (
                 Array.from({ length: 8 }).map((_, i) => (
                   <tr key={i}>
@@ -105,49 +105,53 @@ export const AdminAttendeesPage = () => {
                 ))
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400">No attendees found</td>
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400 dark:text-slate-500">No attendees found</td>
                 </tr>
               ) : (
                 filtered.map(att => {
                   const ticket = att.tickets?.[0];
                   return (
-                    <tr key={att.id} className="hover:bg-gray-50/50 transition-colors">
+                    <tr key={att.id} className="hover:bg-gray-50/50 dark:hover:bg-slate-800/50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-violet-100 rounded-full flex items-center justify-center flex-shrink-0 text-violet-700 font-semibold text-sm">
+                          <div className="w-8 h-8 bg-violet-100 dark:bg-violet-900/40 rounded-full flex items-center justify-center flex-shrink-0 text-violet-700 dark:text-violet-400 font-semibold text-sm">
                             {att.users?.name?.[0]?.toUpperCase() || '?'}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-medium text-gray-900 truncate">{att.users?.name}</p>
-                            <p className="text-xs text-gray-400 truncate">{att.users?.email}</p>
+                            <p className="font-medium text-gray-900 dark:text-white truncate">{att.users?.name}</p>
+                            <p className="text-xs text-gray-400 dark:text-slate-500 truncate">{att.users?.email}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-1.5">
                           {statusIcon[att.status] || statusIcon.pending}
-                          <span className="text-gray-700 capitalize">{att.status}</span>
+                          <span className="text-gray-700 dark:text-slate-300 capitalize">{att.status}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 font-medium text-gray-900">
-                        {att.amount_paid === 0 ? <span className="text-emerald-600">Free</span> : `₹${att.amount_paid}`}
+                      <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                        {att.amount_paid === 0 ? <span className="text-emerald-600 dark:text-emerald-400">Free</span> : `₹${att.amount_paid}`}
                       </td>
                       <td className="px-6 py-4">
                         {ticket ? (
-                          <span className={`badge ${ticket.status === 'used' ? 'bg-emerald-100 text-emerald-700' : ticket.status === 'valid' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
+                          <span className={`badge ${
+                            ticket.status === 'used' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                            ticket.status === 'valid' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                            'bg-gray-100 text-gray-600 dark:bg-slate-700 dark:text-slate-400'
+                          }`}>
                             {ticket.status}
                           </span>
-                        ) : <span className="text-gray-300">—</span>}
+                        ) : <span className="text-gray-300 dark:text-slate-600">—</span>}
                       </td>
-                      <td className="px-6 py-4 text-gray-500">
+                      <td className="px-6 py-4 text-gray-500 dark:text-slate-400">
                         {ticket?.checked_in_at
                           ? format(new Date(ticket.checked_in_at), 'h:mm a, MMM d')
-                          : <span className="text-gray-300">—</span>}
+                          : <span className="text-gray-300 dark:text-slate-600">—</span>}
                       </td>
-                      <td className="px-6 py-4 text-gray-500">
+                      <td className="px-6 py-4 text-gray-500 dark:text-slate-400">
                         {att.confirmed_at
                           ? format(new Date(att.confirmed_at), 'MMM d, yyyy')
-                          : <span className="text-gray-300">—</span>}
+                          : <span className="text-gray-300 dark:text-slate-600">—</span>}
                       </td>
                     </tr>
                   );

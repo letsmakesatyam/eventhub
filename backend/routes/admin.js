@@ -1,4 +1,5 @@
 const express = require('express');
+const bcrypt = require('bcryptjs');
 const supabase = require('../config/supabase');
 const { authenticate, requireAdmin } = require('../middleware/auth');
 
@@ -118,6 +119,48 @@ router.get('/users', authenticate, requireAdmin, async (req, res) => {
   } catch (err) {
     console.error('Users error:', err);
     res.status(500).json({ error: 'Failed to fetch users' });
+  }
+});
+
+// POST /api/admin/create-admin - Create a new admin account
+router.post('/create-admin', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: 'Name, email, and password are required' });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    }
+
+    const { data: existing } = await supabase
+      .from('users')
+      .select('id')
+      .eq('email', email.toLowerCase())
+      .maybeSingle();
+
+    if (existing) {
+      return res.status(409).json({ error: 'Email already registered' });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+    const { data: user, error } = await supabase
+      .from('users')
+      .insert({
+        name: name.trim(),
+        email: email.toLowerCase().trim(),
+        password_hash: passwordHash,
+        role: 'admin'
+      })
+      .select('id, name, email, role, created_at')
+      .single();
+
+    if (error) throw error;
+    res.status(201).json({ message: 'Admin account created successfully', user });
+  } catch (err) {
+    console.error('Create admin error:', err);
+    res.status(500).json({ error: 'Failed to create admin account' });
   }
 });
 

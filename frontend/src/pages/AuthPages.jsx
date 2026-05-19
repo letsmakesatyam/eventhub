@@ -37,14 +37,14 @@ export const LoginPage = () => {
           <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-violet-600 to-indigo-500 rounded-2xl mb-4">
             <Ticket className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">Welcome back</h1>
-          <p className="text-gray-500 text-sm">Sign in to your EventHub account</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Welcome back</h1>
+          <p className="text-gray-500 dark:text-slate-400 text-sm">Sign in to your EventHub account</p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Email</label>
               <input
                 type="email"
                 value={email}
@@ -55,7 +55,7 @@ export const LoginPage = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Password</label>
               <div className="relative">
                 <input
                   type={showPass ? 'text' : 'password'}
@@ -68,7 +68,7 @@ export const LoginPage = () => {
                 <button
                   type="button"
                   onClick={() => setShowPass(!showPass)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-slate-500 dark:hover:text-slate-300"
                 >
                   {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -80,9 +80,9 @@ export const LoginPage = () => {
           </form>
         </div>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="text-center text-sm text-gray-500 dark:text-slate-400 mt-6">
           Don't have an account?{' '}
-          <Link to="/register" className="text-violet-600 font-medium hover:underline">Create one</Link>
+          <Link to="/register" className="text-violet-600 dark:text-violet-400 font-medium hover:underline">Create one</Link>
         </p>
       </div>
     </div>
@@ -108,7 +108,7 @@ export const RegisterPage = () => {
     if (form.password.length < 6) return toast.error('Password must be at least 6 characters');
     try {
       setLoading(true);
-      const user = await register(form.name, form.email, form.password, isCreator ? 'organizer' : 'user');
+      const user = await register(form.name, form.email, form.password);
       toast.success(`Welcome to EventHub, ${user.name.split(' ')[0]}!`);
       navigate('/events');
     } catch (err) {
@@ -125,27 +125,27 @@ export const RegisterPage = () => {
           <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-violet-600 to-indigo-500 rounded-2xl mb-4">
             <Ticket className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
             {isCreator ? 'Create your organizer account' : 'Create your account'}
           </h1>
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-500 dark:text-slate-400 text-sm">
             {isCreator ? 'Register as an event creator and start organizing events on EventHub.' : 'Join EventHub to discover amazing events.'}
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm p-8">
           <form onSubmit={handleSubmit} className="space-y-4">
             {[
               { label: 'Full Name', key: 'name', type: 'text', placeholder: 'Priya Sharma', autocomplete: 'name' },
               { label: 'Email', key: 'email', type: 'email', placeholder: 'you@example.com', autocomplete: 'email' },
             ].map(({ label, key, type, placeholder, autocomplete }) => (
               <div key={key}>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">{label}</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">{label}</label>
                 <input type={type} value={form[key]} onChange={update(key)} placeholder={placeholder} className="input-field" autoComplete={autocomplete} />
               </div>
             ))}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Password</label>
               <div className="relative">
                 <input
                   type={showPass ? 'text' : 'password'}
@@ -155,13 +155,13 @@ export const RegisterPage = () => {
                   className="input-field pr-12"
                   autoComplete="new-password"
                 />
-                <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-slate-500 dark:hover:text-slate-300">
                   {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Confirm Password</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Confirm Password</label>
               <input type="password" value={form.confirm} onChange={update('confirm')} placeholder="Re-enter password" className="input-field" autoComplete="new-password" />
             </div>
             <button type="submit" disabled={loading} className="btn-primary w-full py-3 mt-2">
@@ -170,9 +170,9 @@ export const RegisterPage = () => {
           </form>
         </div>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="text-center text-sm text-gray-500 dark:text-slate-400 mt-6">
           Already have an account?{' '}
-          <Link to="/login" className="text-violet-600 font-medium hover:underline">Sign in</Link>
+          <Link to="/login" className="text-violet-600 dark:text-violet-400 font-medium hover:underline">Sign in</Link>
         </p>
       </div>
     </div>

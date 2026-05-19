@@ -101,6 +101,7 @@ export const adminAPI = {
   revenue: () => api.get('/api/admin/revenue'),
   attendees: (eventId) => api.get(`/api/admin/events/${eventId}/attendees`),
   users: () => api.get('/api/admin/users'),
+  createAdmin: (data) => api.post('/api/admin/create-admin', data),
 };
 
 export default api;

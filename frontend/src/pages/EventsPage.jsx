@@ -43,8 +43,8 @@ export const EventsPage = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animate-fade-in">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Upcoming Events</h1>
-        <p className="text-gray-500">Discover and register for events happening near you</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Upcoming Events</h1>
+        <p className="text-gray-500 dark:text-slate-400">Discover and register for events happening near you</p>
       </div>
 
       {/* Filters */}
@@ -67,7 +67,7 @@ export const EventsPage = () => {
               className={`flex-shrink-0 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 category === cat
                   ? 'bg-violet-600 text-white shadow-sm'
-                  : 'bg-white border border-gray-200 text-gray-600 hover:border-violet-300 hover:text-violet-600'
+                  : 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 hover:border-violet-300 hover:text-violet-600'
               }`}
             >
               {cat}
@@ -105,8 +105,8 @@ export const EventsPage = () => {
       ) : filtered.length === 0 ? (
         <div className="text-center py-20">
           <div className="text-5xl mb-4">🔍</div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No events found</h3>
-          <p className="text-gray-500">Try adjusting your search or filters</p>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No events found</h3>
+          <p className="text-gray-500 dark:text-slate-400">Try adjusting your search or filters</p>
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

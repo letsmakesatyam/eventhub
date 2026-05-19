@@ -14,6 +14,7 @@ import { AdminEventsPage } from './pages/admin/AdminEventsPage';
 import { AdminScannerPage } from './pages/admin/AdminScannerPage';
 import { AdminRevenuePage } from './pages/admin/AdminRevenuePage';
 import { AdminAttendeesPage } from './pages/admin/AdminAttendeesPage';
+import { AdminUsersPage } from './pages/admin/AdminUsersPage';
 
 // Protected route wrapper
 const ProtectedRoute = ({ adminOnly = false }) => {
@@ -65,6 +66,7 @@ export default function App() {
                 <Route path="/admin/scanner" element={<AdminScannerPage />} />
                 <Route path="/admin/revenue" element={<AdminRevenuePage />} />
                 <Route path="/admin/attendees/:eventId" element={<AdminAttendeesPage />} />
+                <Route path="/admin/users" element={<AdminUsersPage />} />
               </Route>
 
               <Route path="*" element={

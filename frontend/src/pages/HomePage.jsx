@@ -12,14 +12,14 @@ export const HomePage = () => (
   <div className="animate-fade-in">
     {/* Hero */}
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24 text-center">
-      <div className="inline-flex items-center gap-2 bg-violet-50 border border-violet-200 text-violet-700 px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+      <div className="inline-flex items-center gap-2 bg-violet-50 dark:bg-violet-900/30 border border-violet-200 dark:border-violet-800 text-violet-700 dark:text-violet-300 px-4 py-1.5 rounded-full text-sm font-medium mb-6">
         <span className="w-1.5 h-1.5 bg-violet-500 rounded-full animate-pulse" />
         Event ticketing, reimagined
       </div>
-      <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 leading-tight mb-6">
+      <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white leading-tight mb-6">
         Where <span className="gradient-text">Moments</span> Begin
       </h1>
-      <p className="text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
+      <p className="text-xl text-gray-500 dark:text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
         Discover events, register instantly, and get digital QR tickets — all in one seamless platform built for the modern world.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -37,11 +37,11 @@ export const HomePage = () => (
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {features.map(({ icon: Icon, title, desc }) => (
           <div key={title} className="glass-card rounded-2xl p-6">
-            <div className="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center mb-4">
-              <Icon className="w-5 h-5 text-violet-600" />
+            <div className="w-10 h-10 bg-violet-100 dark:bg-violet-900/40 rounded-xl flex items-center justify-center mb-4">
+              <Icon className="w-5 h-5 text-violet-600 dark:text-violet-400" />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">{title}</h3>
-            <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{title}</h3>
+            <p className="text-sm text-gray-500 dark:text-slate-400 leading-relaxed">{desc}</p>
           </div>
         ))}
       </div>

@@ -20,7 +20,7 @@ export const Navbar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
+    <nav className="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/90 backdrop-blur-md border-b border-gray-100 dark:border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -28,21 +28,21 @@ export const Navbar = () => {
             <div className="w-8 h-8 bg-gradient-to-br from-violet-600 to-indigo-500 rounded-lg flex items-center justify-center">
               <Ticket className="w-4 h-4 text-white" />
             </div>
-            <span className="font-bold text-xl text-gray-900">Event<span className="gradient-text">Hub</span></span>
+            <span className="font-bold text-xl text-gray-900 dark:text-white">Event<span className="gradient-text">Hub</span></span>
           </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
             <Link
               to="/events"
-              className={`text-sm font-medium transition-colors ${isActive('/events') ? 'text-violet-600' : 'text-gray-600 hover:text-gray-900'}`}
+              className={`text-sm font-medium transition-colors ${isActive('/events') ? 'text-violet-600 dark:text-violet-400' : 'text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white'}`}
             >
               Events
             </Link>
             {user && (
               <Link
                 to="/my-tickets"
-                className={`text-sm font-medium transition-colors ${isActive('/my-tickets') ? 'text-violet-600' : 'text-gray-600 hover:text-gray-900'}`}
+                className={`text-sm font-medium transition-colors ${isActive('/my-tickets') ? 'text-violet-600 dark:text-violet-400' : 'text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white'}`}
               >
                 My Tickets
               </Link>
@@ -50,7 +50,7 @@ export const Navbar = () => {
             {isAdmin && (
               <Link
                 to="/admin"
-                className={`text-sm font-medium transition-colors ${isActive('/admin') ? 'text-violet-600' : 'text-gray-600 hover:text-gray-900'}`}
+                className={`text-sm font-medium transition-colors ${isActive('/admin') ? 'text-violet-600 dark:text-violet-400' : 'text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white'}`}
               >
                 Dashboard
               </Link>
@@ -83,7 +83,7 @@ export const Navbar = () => {
               </div>
             ) : (
               <>
-                <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors dark:text-gray-300 dark:hover:text-white">
+                <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-slate-300 dark:hover:text-white transition-colors">
                   Sign in
                 </Link>
                 <Link to="/register" className="btn-primary text-sm py-2">

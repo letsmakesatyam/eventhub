@@ -54,10 +54,16 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    background-image: 
+    background-image:
       radial-gradient(ellipse at 20% 0%, hsla(245, 82%, 96%, 0.5) 0%, transparent 50%),
       radial-gradient(ellipse at 80% 0%, hsla(280, 70%, 96%, 0.4) 0%, transparent 50%);
     min-height: 100vh;
+  }
+
+  .dark body {
+    background-image:
+      radial-gradient(ellipse at 20% 0%, hsla(245, 82%, 20%, 0.25) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 0%, hsla(280, 70%, 15%, 0.2) 0%, transparent 50%);
   }
 
   h1, h2, h3, h4, h5, h6 {
