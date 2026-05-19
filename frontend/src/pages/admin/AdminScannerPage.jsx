@@ -1,24 +1,39 @@
 import { useState, useEffect, useRef } from 'react';
-import { ticketsAPI } from '../../lib/api';
+import { ticketsAPI, eventsAPI, fetchWithRetry } from '../../lib/api';
 import { useToast } from '../../context/ToastContext';
-import { QrCode, CheckCircle, XCircle, Camera, Keyboard } from 'lucide-react';
+import { QrCode, CheckCircle, XCircle, Camera, Keyboard, ChevronDown, Calendar } from 'lucide-react';
 
 export const AdminScannerPage = () => {
+  const [events, setEvents] = useState([]);
+  const [eventsLoading, setEventsLoading] = useState(true);
+  const [selectedEventId, setSelectedEventId] = useState('');
+
   const [mode, setMode] = useState('manual'); // 'camera' | 'manual'
   const [manualInput, setManualInput] = useState('');
   const [result, setResult] = useState(null);
   const [scanning, setScanning] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
-  const scannerRef = useRef(null);
+
   const html5QrRef = useRef(null);
   const { toast } = useToast();
 
+  // Load this admin's events on mount
+  useEffect(() => {
+    fetchWithRetry(() => eventsAPI.listAll())
+      .then(r => setEvents(r.data.events || []))
+      .catch(() => toast.error('Failed to load events'))
+      .finally(() => setEventsLoading(false));
+  }, []);
+
+  const selectedEvent = events.find(e => e.id === selectedEventId);
+
   const validate = async (qrData) => {
     if (!qrData.trim()) return toast.error('Enter or scan QR data');
+    if (!selectedEventId) return toast.error('Select an event before scanning');
     try {
       setScanning(true);
       setResult(null);
-      const res = await ticketsAPI.validate({ qr_data: qrData.trim() });
+      const res = await ticketsAPI.validate({ qr_data: qrData.trim(), event_id: selectedEventId });
       setResult({ ...res.data, success: true });
     } catch (err) {
       const data = err.response?.data;
@@ -29,6 +44,10 @@ export const AdminScannerPage = () => {
   };
 
   const startCamera = async () => {
+    if (!selectedEventId) {
+      toast.error('Select an event before starting the camera');
+      return;
+    }
     try {
       const { Html5Qrcode } = await import('html5-qrcode');
       html5QrRef.current = new Html5Qrcode('qr-reader');
@@ -42,7 +61,7 @@ export const AdminScannerPage = () => {
         () => {}
       );
       setCameraActive(true);
-    } catch (err) {
+    } catch {
       toast.error('Camera access denied or not available');
     }
   };
@@ -66,15 +85,63 @@ export const AdminScannerPage = () => {
     setResult(null);
   };
 
+  const handleEventChange = async (e) => {
+    if (cameraActive) await stopCamera();
+    setSelectedEventId(e.target.value);
+    setResult(null);
+    setManualInput('');
+  };
+
+  const scannerLocked = !selectedEventId;
+
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animate-fade-in">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">QR Scanner</h1>
-        <p className="text-gray-500 dark:text-slate-400">Scan or enter ticket QR data to validate check-in</p>
+        <p className="text-gray-500 dark:text-slate-400">Select your event, then scan or enter a ticket QR code to validate check-in</p>
       </div>
 
-      {/* Mode switcher */}
-      <div className="flex gap-2 bg-gray-100 dark:bg-slate-800 rounded-xl p-1 mb-6">
+      {/* Event selector */}
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm p-5 mb-6">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+          <Calendar className="w-4 h-4 text-violet-500" />
+          Select Event to Scan For
+        </label>
+        {eventsLoading ? (
+          <div className="h-10 shimmer rounded-lg" />
+        ) : events.length === 0 ? (
+          <div className="text-sm text-gray-400 dark:text-slate-500 py-2">
+            You have no events. Create an event first.
+          </div>
+        ) : (
+          <div className="relative">
+            <select
+              value={selectedEventId}
+              onChange={handleEventChange}
+              className="input-field appearance-none pr-10 cursor-pointer"
+            >
+              <option value="">— Choose an event —</option>
+              {events.map(ev => (
+                <option key={ev.id} value={ev.id}>
+                  {ev.title}
+                  {ev.event_date ? ` · ${new Date(ev.event_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}` : ''}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          </div>
+        )}
+
+        {selectedEvent && (
+          <div className="mt-3 flex items-center gap-2 text-sm text-violet-700 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/20 rounded-lg px-3 py-2">
+            <CheckCircle className="w-4 h-4 flex-shrink-0" />
+            <span>Scanning for: <span className="font-semibold">{selectedEvent.title}</span></span>
+          </div>
+        )}
+      </div>
+
+      {/* Mode switcher — only active when an event is selected */}
+      <div className={`flex gap-2 bg-gray-100 dark:bg-slate-800 rounded-xl p-1 mb-6 transition-opacity ${scannerLocked ? 'opacity-40 pointer-events-none select-none' : ''}`}>
         {[
           { key: 'camera', icon: Camera, label: 'Camera Scan' },
           { key: 'manual', icon: Keyboard, label: 'Manual Entry' },
@@ -93,9 +160,14 @@ export const AdminScannerPage = () => {
         ))}
       </div>
 
-      {/* Scanner UI */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm p-6 mb-6">
-        {mode === 'camera' ? (
+      {/* Scanner UI — locked until event selected */}
+      <div className={`bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm p-6 mb-6 transition-opacity ${scannerLocked ? 'opacity-40 pointer-events-none select-none' : ''}`}>
+        {scannerLocked ? (
+          <div className="flex flex-col items-center justify-center py-8 gap-3 text-gray-400 dark:text-slate-500">
+            <QrCode className="w-12 h-12 opacity-40" />
+            <p className="text-sm">Select an event above to enable scanning</p>
+          </div>
+        ) : mode === 'camera' ? (
           <div className="space-y-4">
             <div id="qr-reader" className="w-full rounded-xl overflow-hidden" />
             {!cameraActive ? (

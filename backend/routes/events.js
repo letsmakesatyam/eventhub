@@ -4,7 +4,7 @@ const { authenticate, requireAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
-// GET /api/events - Public: list all events
+// GET /api/events - Public: list published/ongoing events
 router.get('/', async (req, res) => {
   try {
     const { status, limit = 20, offset = 0 } = req.query;
@@ -31,7 +31,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /api/events/all - Admin: list all events including drafts
+// GET /api/events/all - Admin: list only this admin's events (including drafts)
 router.get('/all', authenticate, requireAdmin, async (req, res) => {
   try {
     const { data: events, error } = await supabase
@@ -40,6 +40,7 @@ router.get('/all', authenticate, requireAdmin, async (req, res) => {
         *,
         registrations:registrations(count)
       `)
+      .eq('created_by', req.user.id)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -70,7 +71,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST /api/events - Admin: create event
+// POST /api/events - Admin: create event (automatically assigned to this admin)
 router.post('/', authenticate, requireAdmin, async (req, res) => {
   try {
     const {
@@ -111,9 +112,21 @@ router.post('/', authenticate, requireAdmin, async (req, res) => {
   }
 });
 
-// PUT /api/events/:id - Admin: update event
+// PUT /api/events/:id - Admin: update own event only
 router.put('/:id', authenticate, requireAdmin, async (req, res) => {
   try {
+    // Verify ownership before updating
+    const { data: owned } = await supabase
+      .from('events')
+      .select('id')
+      .eq('id', req.params.id)
+      .eq('created_by', req.user.id)
+      .maybeSingle();
+
+    if (!owned) {
+      return res.status(403).json({ error: 'Event not found or access denied' });
+    }
+
     const {
       title, description, event_date, end_date, location,
       venue, capacity, price, image_url, category, status
@@ -128,6 +141,7 @@ router.put('/:id', authenticate, requireAdmin, async (req, res) => {
         updated_at: new Date().toISOString()
       })
       .eq('id', req.params.id)
+      .eq('created_by', req.user.id)
       .select()
       .single();
 
@@ -139,13 +153,26 @@ router.put('/:id', authenticate, requireAdmin, async (req, res) => {
   }
 });
 
-// DELETE /api/events/:id - Admin: delete event
+// DELETE /api/events/:id - Admin: delete own event only
 router.delete('/:id', authenticate, requireAdmin, async (req, res) => {
   try {
+    // Verify ownership before deleting
+    const { data: owned } = await supabase
+      .from('events')
+      .select('id')
+      .eq('id', req.params.id)
+      .eq('created_by', req.user.id)
+      .maybeSingle();
+
+    if (!owned) {
+      return res.status(403).json({ error: 'Event not found or access denied' });
+    }
+
     const { error } = await supabase
       .from('events')
       .delete()
-      .eq('id', req.params.id);
+      .eq('id', req.params.id)
+      .eq('created_by', req.user.id);
 
     if (error) throw error;
     res.json({ message: 'Event deleted' });

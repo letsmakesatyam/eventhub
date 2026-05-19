@@ -7,7 +7,7 @@ import { ServerStatusBanner } from './components/ui/ServerStatusBanner';
 import { HomePage } from './pages/HomePage';
 import { EventsPage } from './pages/EventsPage';
 import { EventDetailPage } from './pages/EventDetailPage';
-import { LoginPage, RegisterPage } from './pages/AuthPages';
+import { LoginPage, RegisterPage, AdminRegisterPage } from './pages/AuthPages';
 import { MyTicketsPage } from './pages/MyTicketsPage';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { AdminEventsPage } from './pages/admin/AdminEventsPage';
@@ -53,6 +53,7 @@ export default function App() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/register-organizer" element={<RegisterPage />} />
+                <Route path="/register-admin" element={<AdminRegisterPage />} />
 
               {/* Protected user routes */}
               <Route element={<ProtectedRoute />}>

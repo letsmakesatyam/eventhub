@@ -5,9 +5,27 @@ const { authenticate, requireAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
-// GET /api/admin/dashboard - Overall stats
+// Helper: get all event IDs created by this admin
+async function getAdminEventIds(adminId) {
+  const { data } = await supabase
+    .from('events')
+    .select('id')
+    .eq('created_by', adminId);
+  return (data || []).map(e => e.id);
+}
+
+// GET /api/admin/dashboard - Stats scoped to the logged-in admin's events
 router.get('/dashboard', authenticate, requireAdmin, async (req, res) => {
   try {
+    const eventIds = await getAdminEventIds(req.user.id);
+
+    if (eventIds.length === 0) {
+      return res.json({
+        stats: { total_events: 0, total_registrations: 0, total_revenue: 0, checked_in: 0 },
+        recent_registrations: []
+      });
+    }
+
     const [
       { count: totalEvents },
       { count: totalRegistrations },
@@ -15,10 +33,10 @@ router.get('/dashboard', authenticate, requireAdmin, async (req, res) => {
       { count: checkedIn },
       { data: recentRegistrations }
     ] = await Promise.all([
-      supabase.from('events').select('*', { count: 'exact', head: true }),
-      supabase.from('registrations').select('*', { count: 'exact', head: true }).eq('status', 'confirmed'),
-      supabase.from('registrations').select('amount_paid').eq('status', 'confirmed'),
-      supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('status', 'used'),
+      supabase.from('events').select('*', { count: 'exact', head: true }).eq('created_by', req.user.id),
+      supabase.from('registrations').select('*', { count: 'exact', head: true }).eq('status', 'confirmed').in('event_id', eventIds),
+      supabase.from('registrations').select('amount_paid').eq('status', 'confirmed').in('event_id', eventIds),
+      supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('status', 'used').in('event_id', eventIds),
       supabase
         .from('registrations')
         .select(`
@@ -27,6 +45,7 @@ router.get('/dashboard', authenticate, requireAdmin, async (req, res) => {
           events (title, event_date)
         `)
         .eq('status', 'confirmed')
+        .in('event_id', eventIds)
         .order('confirmed_at', { ascending: false })
         .limit(10)
     ]);
@@ -50,9 +69,21 @@ router.get('/dashboard', authenticate, requireAdmin, async (req, res) => {
   }
 });
 
-// GET /api/admin/events/:eventId/attendees
+// GET /api/admin/events/:eventId/attendees - Scoped to admin's own events
 router.get('/events/:eventId/attendees', authenticate, requireAdmin, async (req, res) => {
   try {
+    // Ensure the event belongs to this admin
+    const { data: event } = await supabase
+      .from('events')
+      .select('id')
+      .eq('id', req.params.eventId)
+      .eq('created_by', req.user.id)
+      .maybeSingle();
+
+    if (!event) {
+      return res.status(403).json({ error: 'Event not found or access denied' });
+    }
+
     const { data: attendees, error } = await supabase
       .from('registrations')
       .select(`
@@ -71,7 +102,7 @@ router.get('/events/:eventId/attendees', authenticate, requireAdmin, async (req,
   }
 });
 
-// GET /api/admin/revenue
+// GET /api/admin/revenue - Revenue for this admin's events only
 router.get('/revenue', authenticate, requireAdmin, async (req, res) => {
   try {
     const { data: events, error } = await supabase
@@ -80,6 +111,7 @@ router.get('/revenue', authenticate, requireAdmin, async (req, res) => {
         id, title, event_date, price, capacity, registrations_count,
         registrations (amount_paid, status)
       `)
+      .eq('created_by', req.user.id)
       .order('event_date', { ascending: false });
 
     if (error) throw error;
@@ -106,12 +138,32 @@ router.get('/revenue', authenticate, requireAdmin, async (req, res) => {
   }
 });
 
-// GET /api/admin/users
+// GET /api/admin/users - Users who registered for this admin's events
 router.get('/users', authenticate, requireAdmin, async (req, res) => {
   try {
+    const eventIds = await getAdminEventIds(req.user.id);
+
+    if (eventIds.length === 0) {
+      return res.json({ users: [] });
+    }
+
+    // Find users with confirmed registrations for this admin's events
+    const { data: registrations } = await supabase
+      .from('registrations')
+      .select('user_id')
+      .in('event_id', eventIds)
+      .eq('status', 'confirmed');
+
+    const userIds = [...new Set((registrations || []).map(r => r.user_id))];
+
+    if (userIds.length === 0) {
+      return res.json({ users: [] });
+    }
+
     const { data: users, error } = await supabase
       .from('users')
       .select('id, name, email, role, created_at')
+      .in('id', userIds)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
