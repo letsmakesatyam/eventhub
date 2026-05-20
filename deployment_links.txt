@@ -15,7 +15,7 @@ Demo Credentials (all passwords: 123456)
 -----------------------------
 
 Admin login:
-  Email    : harshit@eventhub.com
+  Email    : satyamrevgade@eventhub.com
   Password : 123456
 
 Admin 2:

@@ -23,11 +23,11 @@ INSERT INTO users (id, name, email, password_hash, role, avatar_url, created_at,
 
 -- Admin 1 (primary — creates all events)
 ('00000001-0000-0000-0000-000000000001',
- 'Harshit Sharma',
- 'harshit@eventhub.com',
+ 'Satyam Revgade',
+ 'satyamrevgade@eventhub.com',
  crypt('123456', gen_salt('bf', 10)),
  'admin',
- 'https://api.dicebear.com/7.x/avataaars/svg?seed=harshit',
+ 'https://api.dicebear.com/7.x/avataaars/svg?seed=satyam',
  NOW() - INTERVAL '6 months',
  NOW() - INTERVAL '6 months'),
 
@@ -736,7 +736,7 @@ UNION ALL SELECT 'valid_tickets', COUNT(*) FROM tickets WHERE status = 'valid';
 -- ============================================================
 -- DEMO LOGINS (all password: 123456)
 -- ============================================================
--- ADMIN 1:  harshit@eventhub.com   / 123456  (has 10 events, 42 regs)
+-- ADMIN 1:  satyamrevgade@eventhub.com   / 123456  (has 10 events, 42 regs)
 -- ADMIN 2:  admin@eventhub.com     / 123456
 -- USER 1:   arjun@gmail.com        / 123456  (5 events registered)
 -- USER 2:   sneha@gmail.com        / 123456  (7 events registered)

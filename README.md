@@ -156,7 +156,7 @@ OTP         : 1234
 
 | Role | Email | Password |
 |---|---|---|
-| Admin | harshit@eventhub.com | 123456 |
+| Admin | satyamrevgade@eventhub.com | 123456 |
 | Admin | admin@eventhub.com | 123456 |
 | User | arjun@gmail.com | 123456 |
 | User | sneha@gmail.com | 123456 |
