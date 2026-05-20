@@ -1,0 +1,765 @@
+-- ============================================================
+-- EventHub LinkedIn Demo Seed Data
+-- Run this entire script in Supabase SQL Editor
+-- All users have password: 123456
+-- ============================================================
+
+-- Enable pgcrypto for bcrypt password hashing
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+-- ============================================================
+-- STEP 1: DELETE ALL EXISTING DATA (correct cascade order)
+-- ============================================================
+DELETE FROM tickets;
+DELETE FROM registrations;
+DELETE FROM events;
+DELETE FROM users;
+
+-- ============================================================
+-- STEP 2: INSERT USERS (2 admins + 8 regular users)
+-- All passwords: 123456
+-- ============================================================
+INSERT INTO users (id, name, email, password_hash, role, avatar_url, created_at, updated_at) VALUES
+
+-- Admin 1 (primary — creates all events)
+('00000001-0000-0000-0000-000000000001',
+ 'Harshit Sharma',
+ 'harshit@eventhub.com',
+ crypt('123456', gen_salt('bf', 10)),
+ 'admin',
+ 'https://api.dicebear.com/7.x/avataaars/svg?seed=harshit',
+ NOW() - INTERVAL '6 months',
+ NOW() - INTERVAL '6 months'),
+
+-- Admin 2
+('00000001-0000-0000-0000-000000000002',
+ 'Priya Mehta',
+ 'admin@eventhub.com',
+ crypt('123456', gen_salt('bf', 10)),
+ 'admin',
+ 'https://api.dicebear.com/7.x/avataaars/svg?seed=priya',
+ NOW() - INTERVAL '5 months',
+ NOW() - INTERVAL '5 months'),
+
+-- Regular Users
+('00000002-0000-0000-0000-000000000001',
+ 'Arjun Kapoor',
+ 'arjun@gmail.com',
+ crypt('123456', gen_salt('bf', 10)),
+ 'user',
+ 'https://api.dicebear.com/7.x/avataaars/svg?seed=arjun',
+ NOW() - INTERVAL '4 months',
+ NOW() - INTERVAL '4 months'),
+
+('00000002-0000-0000-0000-000000000002',
+ 'Sneha Patel',
+ 'sneha@gmail.com',
+ crypt('123456', gen_salt('bf', 10)),
+ 'user',
+ 'https://api.dicebear.com/7.x/avataaars/svg?seed=sneha',
+ NOW() - INTERVAL '4 months',
+ NOW() - INTERVAL '4 months'),
+
+('00000002-0000-0000-0000-000000000003',
+ 'Rohan Verma',
+ 'rohan@gmail.com',
+ crypt('123456', gen_salt('bf', 10)),
+ 'user',
+ 'https://api.dicebear.com/7.x/avataaars/svg?seed=rohan',
+ NOW() - INTERVAL '3 months',
+ NOW() - INTERVAL '3 months'),
+
+('00000002-0000-0000-0000-000000000004',
+ 'Ananya Singh',
+ 'ananya@gmail.com',
+ crypt('123456', gen_salt('bf', 10)),
+ 'user',
+ 'https://api.dicebear.com/7.x/avataaars/svg?seed=ananya',
+ NOW() - INTERVAL '3 months',
+ NOW() - INTERVAL '3 months'),
+
+('00000002-0000-0000-0000-000000000005',
+ 'Vikram Nair',
+ 'vikram@gmail.com',
+ crypt('123456', gen_salt('bf', 10)),
+ 'user',
+ 'https://api.dicebear.com/7.x/avataaars/svg?seed=vikram',
+ NOW() - INTERVAL '2 months',
+ NOW() - INTERVAL '2 months'),
+
+('00000002-0000-0000-0000-000000000006',
+ 'Kavya Reddy',
+ 'kavya@gmail.com',
+ crypt('123456', gen_salt('bf', 10)),
+ 'user',
+ 'https://api.dicebear.com/7.x/avataaars/svg?seed=kavya',
+ NOW() - INTERVAL '2 months',
+ NOW() - INTERVAL '2 months'),
+
+('00000002-0000-0000-0000-000000000007',
+ 'Aditya Joshi',
+ 'aditya@gmail.com',
+ crypt('123456', gen_salt('bf', 10)),
+ 'user',
+ 'https://api.dicebear.com/7.x/avataaars/svg?seed=aditya',
+ NOW() - INTERVAL '1 month',
+ NOW() - INTERVAL '1 month'),
+
+('00000002-0000-0000-0000-000000000008',
+ 'Ishaan Gupta',
+ 'ishaan@gmail.com',
+ crypt('123456', gen_salt('bf', 10)),
+ 'user',
+ 'https://api.dicebear.com/7.x/avataaars/svg?seed=ishaan',
+ NOW() - INTERVAL '1 month',
+ NOW() - INTERVAL '1 month');
+
+-- ============================================================
+-- STEP 3: INSERT EVENTS (10 events, all created by Admin 1)
+-- Mix of upcoming, ongoing, and completed
+-- ============================================================
+INSERT INTO events (id, title, description, event_date, end_date, location, venue, capacity, price, image_url, category, status, registrations_count, created_by, created_at, updated_at) VALUES
+
+-- Event 1: Tech Summit (upcoming)
+('00000003-0000-0000-0000-000000000001',
+ 'Tech Summit 2025',
+ 'Join India''s largest technology conference featuring keynotes from industry leaders, hands-on workshops, and networking sessions. Explore the latest in AI, cloud computing, blockchain, and more. Connect with 500+ tech professionals and discover opportunities that shape the future.',
+ NOW() + INTERVAL '25 days',
+ NOW() + INTERVAL '26 days',
+ 'Mumbai',
+ 'Bombay Exhibition Centre, BKC',
+ 500,
+ 999.00,
+ 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80',
+ 'Technology',
+ 'published',
+ 5,
+ '00000001-0000-0000-0000-000000000001',
+ NOW() - INTERVAL '3 months',
+ NOW()),
+
+-- Event 2: AI Conference (upcoming)
+('00000003-0000-0000-0000-000000000002',
+ 'AI & Machine Learning Conference',
+ 'A deep-dive conference into the world of Artificial Intelligence and Machine Learning. Featuring 20+ sessions on LLMs, computer vision, MLOps, and responsible AI. Whether you''re a researcher or practitioner, this is the event that will define your AI journey in 2025.',
+ NOW() + INTERVAL '35 days',
+ NOW() + INTERVAL '36 days',
+ 'Bangalore',
+ 'Bangalore International Exhibition Centre',
+ 300,
+ 1299.00,
+ 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80',
+ 'Technology',
+ 'published',
+ 4,
+ '00000001-0000-0000-0000-000000000001',
+ NOW() - INTERVAL '2 months',
+ NOW()),
+
+-- Event 3: Startup Networking (upcoming, FREE)
+('00000003-0000-0000-0000-000000000003',
+ 'Startup Networking Night',
+ 'The most vibrant startup networking event in Delhi. Connect with founders, investors, mentors, and fellow entrepreneurs over an evening of pitches, demos, and conversations. Free entry — bring your business cards and your best elevator pitch!',
+ NOW() + INTERVAL '12 days',
+ NULL,
+ 'Delhi',
+ 'India Habitat Centre, Lodhi Road',
+ 200,
+ 0.00,
+ 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&q=80',
+ 'Networking',
+ 'published',
+ 6,
+ '00000001-0000-0000-0000-000000000001',
+ NOW() - INTERVAL '6 weeks',
+ NOW()),
+
+-- Event 4: UI/UX Workshop (upcoming)
+('00000003-0000-0000-0000-000000000004',
+ 'UI/UX Design Masterclass',
+ 'A hands-on, full-day workshop covering the entire UX design process — from user research and wireframing to prototyping and usability testing. Led by senior designers from top product companies. Includes Figma exercises, design critique sessions, and a take-home project.',
+ NOW() + INTERVAL '18 days',
+ NULL,
+ 'Pune',
+ 'WeWork Baner, Pune',
+ 50,
+ 499.00,
+ 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&q=80',
+ 'Design',
+ 'published',
+ 3,
+ '00000001-0000-0000-0000-000000000001',
+ NOW() - INTERVAL '5 weeks',
+ NOW()),
+
+-- Event 5: Business Leadership Summit (upcoming)
+('00000003-0000-0000-0000-000000000005',
+ 'Business Leadership Summit 2025',
+ 'An exclusive summit for senior business leaders and aspiring executives. Featuring power-packed sessions on strategic leadership, organizational culture, growth mindset, and navigating disruption. Limited seats for an intimate, high-impact experience.',
+ NOW() + INTERVAL '45 days',
+ NOW() + INTERVAL '46 days',
+ 'Hyderabad',
+ 'HICC, Novotel Hyderabad Convention Centre',
+ 150,
+ 1499.00,
+ 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80',
+ 'Business',
+ 'published',
+ 2,
+ '00000001-0000-0000-0000-000000000001',
+ NOW() - INTERVAL '2 months',
+ NOW()),
+
+-- Event 6: Music Festival (upcoming)
+('00000003-0000-0000-0000-000000000006',
+ 'Soundwave Music Festival',
+ 'Three stages, twelve acts, one unforgettable night. Soundwave brings together the best indie, electronic, and fusion artists for an outdoor music experience under the stars. Food stalls, art installations, and a community of music lovers — this is the concert you''ve been waiting for.',
+ NOW() + INTERVAL '20 days',
+ NULL,
+ 'Goa',
+ 'Vagator Beach Amphitheatre, North Goa',
+ 1000,
+ 799.00,
+ 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80',
+ 'Entertainment',
+ 'published',
+ 4,
+ '00000001-0000-0000-0000-000000000001',
+ NOW() - INTERVAL '7 weeks',
+ NOW()),
+
+-- Event 7: React Bootcamp (upcoming)
+('00000003-0000-0000-0000-000000000007',
+ 'React & Next.js Bootcamp',
+ 'An intensive two-day bootcamp for developers looking to master modern React and Next.js 14. Covers hooks, state management, server components, app router, API routes, and deployment. Build a production-ready full-stack app from scratch and take your frontend skills to the next level.',
+ NOW() + INTERVAL '30 days',
+ NOW() + INTERVAL '31 days',
+ 'Chennai',
+ 'IIT Madras Research Park',
+ 80,
+ 699.00,
+ 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&q=80',
+ 'Technology',
+ 'published',
+ 3,
+ '00000001-0000-0000-0000-000000000001',
+ NOW() - INTERVAL '6 weeks',
+ NOW()),
+
+-- Event 8: Cloud Summit (COMPLETED)
+('00000003-0000-0000-0000-000000000008',
+ 'Cloud & DevOps Summit',
+ 'India''s premier cloud infrastructure event. Speakers from AWS, Azure, and GCP shared insights on Kubernetes, serverless, CI/CD pipelines, and FinOps. This event was a huge success with 200+ attendees and 8 sessions across two tracks.',
+ NOW() - INTERVAL '20 days',
+ NOW() - INTERVAL '19 days',
+ 'Mumbai',
+ 'The Lalit Mumbai, Andheri East',
+ 250,
+ 999.00,
+ 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&q=80',
+ 'Technology',
+ 'completed',
+ 8,
+ '00000001-0000-0000-0000-000000000001',
+ NOW() - INTERVAL '4 months',
+ NOW()),
+
+-- Event 9: Digital Marketing (ONGOING)
+('00000003-0000-0000-0000-000000000009',
+ 'Digital Marketing Conclave',
+ 'A live, in-progress two-day conclave covering SEO, paid ads, content marketing, social media strategy, and growth hacking. Day 1 is complete — Day 2 sessions are running right now! Speakers include CMOs from top D2C brands and performance marketing experts.',
+ NOW() - INTERVAL '1 day',
+ NOW() + INTERVAL '1 day',
+ 'Bangalore',
+ 'Sheraton Grand Brigade Gateway',
+ 180,
+ 399.00,
+ 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80',
+ 'Marketing',
+ 'ongoing',
+ 5,
+ '00000001-0000-0000-0000-000000000001',
+ NOW() - INTERVAL '3 months',
+ NOW()),
+
+-- Event 10: Photography Workshop (upcoming)
+('00000003-0000-0000-0000-000000000010',
+ 'Urban Photography Workshop',
+ 'Spend a day learning the art of urban and street photography. This workshop covers composition techniques, lighting, post-processing in Lightroom, and building your personal style. Explore the city with your camera alongside fellow photography enthusiasts and a professional photographer guide.',
+ NOW() + INTERVAL '15 days',
+ NULL,
+ 'Kolkata',
+ 'Victoria Memorial Lawns & Surroundings',
+ 40,
+ 299.00,
+ 'https://images.unsplash.com/photo-1552168324-d612d77725e3?w=800&q=80',
+ 'Art',
+ 'published',
+ 2,
+ '00000001-0000-0000-0000-000000000001',
+ NOW() - INTERVAL '4 weeks',
+ NOW());
+
+-- ============================================================
+-- STEP 4: INSERT REGISTRATIONS (42 total, all confirmed)
+-- ============================================================
+INSERT INTO registrations (id, user_id, event_id, status, amount_paid, razorpay_order_id, razorpay_payment_id, razorpay_signature, confirmed_at, created_at) VALUES
+
+-- Event 8 (Cloud Summit, COMPLETED, ₹999) — users 1-8 — regs 001-008
+('00000004-0000-0000-0000-000000000001','00000002-0000-0000-0000-000000000001','00000003-0000-0000-0000-000000000008','confirmed',999.00,'order_CS001','pay_CS001','sig_CS001',NOW()-INTERVAL '22 days',NOW()-INTERVAL '25 days'),
+('00000004-0000-0000-0000-000000000002','00000002-0000-0000-0000-000000000002','00000003-0000-0000-0000-000000000008','confirmed',999.00,'order_CS002','pay_CS002','sig_CS002',NOW()-INTERVAL '22 days',NOW()-INTERVAL '24 days'),
+('00000004-0000-0000-0000-000000000003','00000002-0000-0000-0000-000000000003','00000003-0000-0000-0000-000000000008','confirmed',999.00,'order_CS003','pay_CS003','sig_CS003',NOW()-INTERVAL '21 days',NOW()-INTERVAL '24 days'),
+('00000004-0000-0000-0000-000000000004','00000002-0000-0000-0000-000000000004','00000003-0000-0000-0000-000000000008','confirmed',999.00,'order_CS004','pay_CS004','sig_CS004',NOW()-INTERVAL '21 days',NOW()-INTERVAL '23 days'),
+('00000004-0000-0000-0000-000000000005','00000002-0000-0000-0000-000000000005','00000003-0000-0000-0000-000000000008','confirmed',999.00,'order_CS005','pay_CS005','sig_CS005',NOW()-INTERVAL '20 days',NOW()-INTERVAL '23 days'),
+('00000004-0000-0000-0000-000000000006','00000002-0000-0000-0000-000000000006','00000003-0000-0000-0000-000000000008','confirmed',999.00,'order_CS006','pay_CS006','sig_CS006',NOW()-INTERVAL '20 days',NOW()-INTERVAL '22 days'),
+('00000004-0000-0000-0000-000000000007','00000002-0000-0000-0000-000000000007','00000003-0000-0000-0000-000000000008','confirmed',999.00,'order_CS007','pay_CS007','sig_CS007',NOW()-INTERVAL '20 days',NOW()-INTERVAL '22 days'),
+('00000004-0000-0000-0000-000000000008','00000002-0000-0000-0000-000000000008','00000003-0000-0000-0000-000000000008','confirmed',999.00,'order_CS008','pay_CS008','sig_CS008',NOW()-INTERVAL '19 days',NOW()-INTERVAL '21 days'),
+
+-- Event 9 (Digital Marketing, ONGOING, ₹399) — users 1,3,5,6,7 — regs 009-013
+('00000004-0000-0000-0000-000000000009','00000002-0000-0000-0000-000000000001','00000003-0000-0000-0000-000000000009','confirmed',399.00,'order_DM001','pay_DM001','sig_DM001',NOW()-INTERVAL '5 days',NOW()-INTERVAL '7 days'),
+('00000004-0000-0000-0000-000000000010','00000002-0000-0000-0000-000000000003','00000003-0000-0000-0000-000000000009','confirmed',399.00,'order_DM002','pay_DM002','sig_DM002',NOW()-INTERVAL '5 days',NOW()-INTERVAL '7 days'),
+('00000004-0000-0000-0000-000000000011','00000002-0000-0000-0000-000000000005','00000003-0000-0000-0000-000000000009','confirmed',399.00,'order_DM003','pay_DM003','sig_DM003',NOW()-INTERVAL '4 days',NOW()-INTERVAL '6 days'),
+('00000004-0000-0000-0000-000000000012','00000002-0000-0000-0000-000000000006','00000003-0000-0000-0000-000000000009','confirmed',399.00,'order_DM004','pay_DM004','sig_DM004',NOW()-INTERVAL '4 days',NOW()-INTERVAL '6 days'),
+('00000004-0000-0000-0000-000000000013','00000002-0000-0000-0000-000000000007','00000003-0000-0000-0000-000000000009','confirmed',399.00,'order_DM005','pay_DM005','sig_DM005',NOW()-INTERVAL '3 days',NOW()-INTERVAL '5 days'),
+
+-- Event 1 (Tech Summit, ₹999) — users 1,2,4,6,8 — regs 014-018
+('00000004-0000-0000-0000-000000000014','00000002-0000-0000-0000-000000000001','00000003-0000-0000-0000-000000000001','confirmed',999.00,'order_TS001','pay_TS001','sig_TS001',NOW()-INTERVAL '2 months',NOW()-INTERVAL '2 months'),
+('00000004-0000-0000-0000-000000000015','00000002-0000-0000-0000-000000000002','00000003-0000-0000-0000-000000000001','confirmed',999.00,'order_TS002','pay_TS002','sig_TS002',NOW()-INTERVAL '7 weeks',NOW()-INTERVAL '7 weeks'),
+('00000004-0000-0000-0000-000000000016','00000002-0000-0000-0000-000000000004','00000003-0000-0000-0000-000000000001','confirmed',999.00,'order_TS003','pay_TS003','sig_TS003',NOW()-INTERVAL '6 weeks',NOW()-INTERVAL '6 weeks'),
+('00000004-0000-0000-0000-000000000017','00000002-0000-0000-0000-000000000006','00000003-0000-0000-0000-000000000001','confirmed',999.00,'order_TS004','pay_TS004','sig_TS004',NOW()-INTERVAL '5 weeks',NOW()-INTERVAL '5 weeks'),
+('00000004-0000-0000-0000-000000000018','00000002-0000-0000-0000-000000000008','00000003-0000-0000-0000-000000000001','confirmed',999.00,'order_TS005','pay_TS005','sig_TS005',NOW()-INTERVAL '4 weeks',NOW()-INTERVAL '4 weeks'),
+
+-- Event 2 (AI Conference, ₹1299) — users 2,3,5,7 — regs 019-022
+('00000004-0000-0000-0000-000000000019','00000002-0000-0000-0000-000000000002','00000003-0000-0000-0000-000000000002','confirmed',1299.00,'order_AI001','pay_AI001','sig_AI001',NOW()-INTERVAL '6 weeks',NOW()-INTERVAL '6 weeks'),
+('00000004-0000-0000-0000-000000000020','00000002-0000-0000-0000-000000000003','00000003-0000-0000-0000-000000000002','confirmed',1299.00,'order_AI002','pay_AI002','sig_AI002',NOW()-INTERVAL '5 weeks',NOW()-INTERVAL '5 weeks'),
+('00000004-0000-0000-0000-000000000021','00000002-0000-0000-0000-000000000005','00000003-0000-0000-0000-000000000002','confirmed',1299.00,'order_AI003','pay_AI003','sig_AI003',NOW()-INTERVAL '4 weeks',NOW()-INTERVAL '4 weeks'),
+('00000004-0000-0000-0000-000000000022','00000002-0000-0000-0000-000000000007','00000003-0000-0000-0000-000000000002','confirmed',1299.00,'order_AI004','pay_AI004','sig_AI004',NOW()-INTERVAL '3 weeks',NOW()-INTERVAL '3 weeks'),
+
+-- Event 3 (Startup Networking, FREE) — users 1,3,4,5,6,8 — regs 023-028
+('00000004-0000-0000-0000-000000000023','00000002-0000-0000-0000-000000000001','00000003-0000-0000-0000-000000000003','confirmed',0.00,NULL,NULL,NULL,NOW()-INTERVAL '4 weeks',NOW()-INTERVAL '4 weeks'),
+('00000004-0000-0000-0000-000000000024','00000002-0000-0000-0000-000000000003','00000003-0000-0000-0000-000000000003','confirmed',0.00,NULL,NULL,NULL,NOW()-INTERVAL '3 weeks',NOW()-INTERVAL '3 weeks'),
+('00000004-0000-0000-0000-000000000025','00000002-0000-0000-0000-000000000004','00000003-0000-0000-0000-000000000003','confirmed',0.00,NULL,NULL,NULL,NOW()-INTERVAL '3 weeks',NOW()-INTERVAL '3 weeks'),
+('00000004-0000-0000-0000-000000000026','00000002-0000-0000-0000-000000000005','00000003-0000-0000-0000-000000000003','confirmed',0.00,NULL,NULL,NULL,NOW()-INTERVAL '2 weeks',NOW()-INTERVAL '2 weeks'),
+('00000004-0000-0000-0000-000000000027','00000002-0000-0000-0000-000000000006','00000003-0000-0000-0000-000000000003','confirmed',0.00,NULL,NULL,NULL,NOW()-INTERVAL '2 weeks',NOW()-INTERVAL '2 weeks'),
+('00000004-0000-0000-0000-000000000028','00000002-0000-0000-0000-000000000008','00000003-0000-0000-0000-000000000003','confirmed',0.00,NULL,NULL,NULL,NOW()-INTERVAL '10 days',NOW()-INTERVAL '10 days'),
+
+-- Event 4 (UI/UX Workshop, ₹499) — users 2,7,8 — regs 029-031
+('00000004-0000-0000-0000-000000000029','00000002-0000-0000-0000-000000000002','00000003-0000-0000-0000-000000000004','confirmed',499.00,'order_UX001','pay_UX001','sig_UX001',NOW()-INTERVAL '3 weeks',NOW()-INTERVAL '3 weeks'),
+('00000004-0000-0000-0000-000000000030','00000002-0000-0000-0000-000000000007','00000003-0000-0000-0000-000000000004','confirmed',499.00,'order_UX002','pay_UX002','sig_UX002',NOW()-INTERVAL '2 weeks',NOW()-INTERVAL '2 weeks'),
+('00000004-0000-0000-0000-000000000031','00000002-0000-0000-0000-000000000008','00000003-0000-0000-0000-000000000004','confirmed',499.00,'order_UX003','pay_UX003','sig_UX003',NOW()-INTERVAL '10 days',NOW()-INTERVAL '10 days'),
+
+-- Event 5 (Business Leadership, ₹1499) — users 1,4 — regs 032-033
+('00000004-0000-0000-0000-000000000032','00000002-0000-0000-0000-000000000001','00000003-0000-0000-0000-000000000005','confirmed',1499.00,'order_BL001','pay_BL001','sig_BL001',NOW()-INTERVAL '5 weeks',NOW()-INTERVAL '5 weeks'),
+('00000004-0000-0000-0000-000000000033','00000002-0000-0000-0000-000000000004','00000003-0000-0000-0000-000000000005','confirmed',1499.00,'order_BL002','pay_BL002','sig_BL002',NOW()-INTERVAL '4 weeks',NOW()-INTERVAL '4 weeks'),
+
+-- Event 6 (Music Festival, ₹799) — users 2,5,6,7 — regs 034-037
+('00000004-0000-0000-0000-000000000034','00000002-0000-0000-0000-000000000002','00000003-0000-0000-0000-000000000006','confirmed',799.00,'order_MF001','pay_MF001','sig_MF001',NOW()-INTERVAL '6 weeks',NOW()-INTERVAL '6 weeks'),
+('00000004-0000-0000-0000-000000000035','00000002-0000-0000-0000-000000000005','00000003-0000-0000-0000-000000000006','confirmed',799.00,'order_MF002','pay_MF002','sig_MF002',NOW()-INTERVAL '5 weeks',NOW()-INTERVAL '5 weeks'),
+('00000004-0000-0000-0000-000000000036','00000002-0000-0000-0000-000000000006','00000003-0000-0000-0000-000000000006','confirmed',799.00,'order_MF003','pay_MF003','sig_MF003',NOW()-INTERVAL '4 weeks',NOW()-INTERVAL '4 weeks'),
+('00000004-0000-0000-0000-000000000037','00000002-0000-0000-0000-000000000007','00000003-0000-0000-0000-000000000006','confirmed',799.00,'order_MF004','pay_MF004','sig_MF004',NOW()-INTERVAL '3 weeks',NOW()-INTERVAL '3 weeks'),
+
+-- Event 7 (React Bootcamp, ₹699) — users 3,4,8 — regs 038-040
+('00000004-0000-0000-0000-000000000038','00000002-0000-0000-0000-000000000003','00000003-0000-0000-0000-000000000007','confirmed',699.00,'order_RB001','pay_RB001','sig_RB001',NOW()-INTERVAL '4 weeks',NOW()-INTERVAL '4 weeks'),
+('00000004-0000-0000-0000-000000000039','00000002-0000-0000-0000-000000000004','00000003-0000-0000-0000-000000000007','confirmed',699.00,'order_RB002','pay_RB002','sig_RB002',NOW()-INTERVAL '3 weeks',NOW()-INTERVAL '3 weeks'),
+('00000004-0000-0000-0000-000000000040','00000002-0000-0000-0000-000000000008','00000003-0000-0000-0000-000000000007','confirmed',699.00,'order_RB003','pay_RB003','sig_RB003',NOW()-INTERVAL '2 weeks',NOW()-INTERVAL '2 weeks'),
+
+-- Event 10 (Photography, ₹299) — users 2,6 — regs 041-042
+('00000004-0000-0000-0000-000000000041','00000002-0000-0000-0000-000000000002','00000003-0000-0000-0000-000000000010','confirmed',299.00,'order_PH001','pay_PH001','sig_PH001',NOW()-INTERVAL '2 weeks',NOW()-INTERVAL '2 weeks'),
+('00000004-0000-0000-0000-000000000042','00000002-0000-0000-0000-000000000006','00000003-0000-0000-0000-000000000010','confirmed',299.00,'order_PH002','pay_PH002','sig_PH002',NOW()-INTERVAL '10 days',NOW()-INTERVAL '10 days');
+
+-- ============================================================
+-- STEP 5: INSERT TICKETS (42 total)
+-- Tickets 001-013 = USED (events 8 & 9 = completed/ongoing)
+-- Tickets 014-042 = VALID (upcoming events)
+-- QR codes generated via api.qrserver.com
+-- ============================================================
+INSERT INTO tickets (id, registration_id, user_id, event_id, qr_code, qr_data, status, checked_in_at, checked_in_by, created_at) VALUES
+
+-- ── USED tickets: Event 8 (Cloud Summit, completed) ──────────
+('00000005-0000-0000-0000-000000000001',
+ '00000004-0000-0000-0000-000000000001',
+ '00000002-0000-0000-0000-000000000001',
+ '00000003-0000-0000-0000-000000000008',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000001%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000008%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000001%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000001","eventId":"00000003-0000-0000-0000-000000000008","userId":"00000002-0000-0000-0000-000000000001","issued":1747000000000}',
+ 'used', NOW()-INTERVAL '19 days', '00000001-0000-0000-0000-000000000001', NOW()-INTERVAL '22 days'),
+
+('00000005-0000-0000-0000-000000000002',
+ '00000004-0000-0000-0000-000000000002',
+ '00000002-0000-0000-0000-000000000002',
+ '00000003-0000-0000-0000-000000000008',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000002%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000008%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000002%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000002","eventId":"00000003-0000-0000-0000-000000000008","userId":"00000002-0000-0000-0000-000000000002","issued":1747000001000}',
+ 'used', NOW()-INTERVAL '19 days', '00000001-0000-0000-0000-000000000001', NOW()-INTERVAL '22 days'),
+
+('00000005-0000-0000-0000-000000000003',
+ '00000004-0000-0000-0000-000000000003',
+ '00000002-0000-0000-0000-000000000003',
+ '00000003-0000-0000-0000-000000000008',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000003%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000008%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000003%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000003","eventId":"00000003-0000-0000-0000-000000000008","userId":"00000002-0000-0000-0000-000000000003","issued":1747000002000}',
+ 'used', NOW()-INTERVAL '19 days', '00000001-0000-0000-0000-000000000001', NOW()-INTERVAL '21 days'),
+
+('00000005-0000-0000-0000-000000000004',
+ '00000004-0000-0000-0000-000000000004',
+ '00000002-0000-0000-0000-000000000004',
+ '00000003-0000-0000-0000-000000000008',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000004%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000008%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000004%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000004","eventId":"00000003-0000-0000-0000-000000000008","userId":"00000002-0000-0000-0000-000000000004","issued":1747000003000}',
+ 'used', NOW()-INTERVAL '19 days', '00000001-0000-0000-0000-000000000001', NOW()-INTERVAL '21 days'),
+
+('00000005-0000-0000-0000-000000000005',
+ '00000004-0000-0000-0000-000000000005',
+ '00000002-0000-0000-0000-000000000005',
+ '00000003-0000-0000-0000-000000000008',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000005%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000008%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000005%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000005","eventId":"00000003-0000-0000-0000-000000000008","userId":"00000002-0000-0000-0000-000000000005","issued":1747000004000}',
+ 'used', NOW()-INTERVAL '19 days', '00000001-0000-0000-0000-000000000001', NOW()-INTERVAL '21 days'),
+
+('00000005-0000-0000-0000-000000000006',
+ '00000004-0000-0000-0000-000000000006',
+ '00000002-0000-0000-0000-000000000006',
+ '00000003-0000-0000-0000-000000000008',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000006%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000008%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000006%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000006","eventId":"00000003-0000-0000-0000-000000000008","userId":"00000002-0000-0000-0000-000000000006","issued":1747000005000}',
+ 'used', NOW()-INTERVAL '19 days', '00000001-0000-0000-0000-000000000001', NOW()-INTERVAL '20 days'),
+
+('00000005-0000-0000-0000-000000000007',
+ '00000004-0000-0000-0000-000000000007',
+ '00000002-0000-0000-0000-000000000007',
+ '00000003-0000-0000-0000-000000000008',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000007%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000008%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000007%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000007","eventId":"00000003-0000-0000-0000-000000000008","userId":"00000002-0000-0000-0000-000000000007","issued":1747000006000}',
+ 'used', NOW()-INTERVAL '19 days', '00000001-0000-0000-0000-000000000001', NOW()-INTERVAL '20 days'),
+
+('00000005-0000-0000-0000-000000000008',
+ '00000004-0000-0000-0000-000000000008',
+ '00000002-0000-0000-0000-000000000008',
+ '00000003-0000-0000-0000-000000000008',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000008%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000008%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000008%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000008","eventId":"00000003-0000-0000-0000-000000000008","userId":"00000002-0000-0000-0000-000000000008","issued":1747000007000}',
+ 'used', NOW()-INTERVAL '19 days', '00000001-0000-0000-0000-000000000001', NOW()-INTERVAL '20 days'),
+
+-- ── USED tickets: Event 9 (Digital Marketing, ongoing) ───────
+('00000005-0000-0000-0000-000000000009',
+ '00000004-0000-0000-0000-000000000009',
+ '00000002-0000-0000-0000-000000000001',
+ '00000003-0000-0000-0000-000000000009',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000009%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000009%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000001%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000009","eventId":"00000003-0000-0000-0000-000000000009","userId":"00000002-0000-0000-0000-000000000001","issued":1747100000000}',
+ 'used', NOW()-INTERVAL '1 day', '00000001-0000-0000-0000-000000000001', NOW()-INTERVAL '5 days'),
+
+('00000005-0000-0000-0000-000000000010',
+ '00000004-0000-0000-0000-000000000010',
+ '00000002-0000-0000-0000-000000000003',
+ '00000003-0000-0000-0000-000000000009',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000010%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000009%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000003%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000010","eventId":"00000003-0000-0000-0000-000000000009","userId":"00000002-0000-0000-0000-000000000003","issued":1747100001000}',
+ 'used', NOW()-INTERVAL '1 day', '00000001-0000-0000-0000-000000000001', NOW()-INTERVAL '5 days'),
+
+('00000005-0000-0000-0000-000000000011',
+ '00000004-0000-0000-0000-000000000011',
+ '00000002-0000-0000-0000-000000000005',
+ '00000003-0000-0000-0000-000000000009',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000011%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000009%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000005%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000011","eventId":"00000003-0000-0000-0000-000000000009","userId":"00000002-0000-0000-0000-000000000005","issued":1747100002000}',
+ 'used', NOW()-INTERVAL '1 day', '00000001-0000-0000-0000-000000000001', NOW()-INTERVAL '4 days'),
+
+('00000005-0000-0000-0000-000000000012',
+ '00000004-0000-0000-0000-000000000012',
+ '00000002-0000-0000-0000-000000000006',
+ '00000003-0000-0000-0000-000000000009',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000012%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000009%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000006%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000012","eventId":"00000003-0000-0000-0000-000000000009","userId":"00000002-0000-0000-0000-000000000006","issued":1747100003000}',
+ 'used', NOW()-INTERVAL '1 day', '00000001-0000-0000-0000-000000000001', NOW()-INTERVAL '4 days'),
+
+('00000005-0000-0000-0000-000000000013',
+ '00000004-0000-0000-0000-000000000013',
+ '00000002-0000-0000-0000-000000000007',
+ '00000003-0000-0000-0000-000000000009',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000013%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000009%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000007%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000013","eventId":"00000003-0000-0000-0000-000000000009","userId":"00000002-0000-0000-0000-000000000007","issued":1747100004000}',
+ 'used', NOW()-INTERVAL '22 hours', '00000001-0000-0000-0000-000000000001', NOW()-INTERVAL '3 days'),
+
+-- ── VALID tickets: Event 1 (Tech Summit) ─────────────────────
+('00000005-0000-0000-0000-000000000014',
+ '00000004-0000-0000-0000-000000000014',
+ '00000002-0000-0000-0000-000000000001',
+ '00000003-0000-0000-0000-000000000001',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000014%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000001%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000001%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000014","eventId":"00000003-0000-0000-0000-000000000001","userId":"00000002-0000-0000-0000-000000000001","issued":1746000000000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '2 months'),
+
+('00000005-0000-0000-0000-000000000015',
+ '00000004-0000-0000-0000-000000000015',
+ '00000002-0000-0000-0000-000000000002',
+ '00000003-0000-0000-0000-000000000001',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000015%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000001%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000002%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000015","eventId":"00000003-0000-0000-0000-000000000001","userId":"00000002-0000-0000-0000-000000000002","issued":1746000001000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '7 weeks'),
+
+('00000005-0000-0000-0000-000000000016',
+ '00000004-0000-0000-0000-000000000016',
+ '00000002-0000-0000-0000-000000000004',
+ '00000003-0000-0000-0000-000000000001',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000016%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000001%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000004%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000016","eventId":"00000003-0000-0000-0000-000000000001","userId":"00000002-0000-0000-0000-000000000004","issued":1746000002000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '6 weeks'),
+
+('00000005-0000-0000-0000-000000000017',
+ '00000004-0000-0000-0000-000000000017',
+ '00000002-0000-0000-0000-000000000006',
+ '00000003-0000-0000-0000-000000000001',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000017%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000001%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000006%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000017","eventId":"00000003-0000-0000-0000-000000000001","userId":"00000002-0000-0000-0000-000000000006","issued":1746000003000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '5 weeks'),
+
+('00000005-0000-0000-0000-000000000018',
+ '00000004-0000-0000-0000-000000000018',
+ '00000002-0000-0000-0000-000000000008',
+ '00000003-0000-0000-0000-000000000001',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000018%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000001%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000008%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000018","eventId":"00000003-0000-0000-0000-000000000001","userId":"00000002-0000-0000-0000-000000000008","issued":1746000004000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '4 weeks'),
+
+-- ── VALID tickets: Event 2 (AI Conference) ───────────────────
+('00000005-0000-0000-0000-000000000019',
+ '00000004-0000-0000-0000-000000000019',
+ '00000002-0000-0000-0000-000000000002',
+ '00000003-0000-0000-0000-000000000002',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000019%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000002%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000002%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000019","eventId":"00000003-0000-0000-0000-000000000002","userId":"00000002-0000-0000-0000-000000000002","issued":1746100000000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '6 weeks'),
+
+('00000005-0000-0000-0000-000000000020',
+ '00000004-0000-0000-0000-000000000020',
+ '00000002-0000-0000-0000-000000000003',
+ '00000003-0000-0000-0000-000000000002',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000020%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000002%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000003%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000020","eventId":"00000003-0000-0000-0000-000000000002","userId":"00000002-0000-0000-0000-000000000003","issued":1746100001000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '5 weeks'),
+
+('00000005-0000-0000-0000-000000000021',
+ '00000004-0000-0000-0000-000000000021',
+ '00000002-0000-0000-0000-000000000005',
+ '00000003-0000-0000-0000-000000000002',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000021%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000002%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000005%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000021","eventId":"00000003-0000-0000-0000-000000000002","userId":"00000002-0000-0000-0000-000000000005","issued":1746100002000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '4 weeks'),
+
+('00000005-0000-0000-0000-000000000022',
+ '00000004-0000-0000-0000-000000000022',
+ '00000002-0000-0000-0000-000000000007',
+ '00000003-0000-0000-0000-000000000002',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000022%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000002%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000007%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000022","eventId":"00000003-0000-0000-0000-000000000002","userId":"00000002-0000-0000-0000-000000000007","issued":1746100003000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '3 weeks'),
+
+-- ── VALID tickets: Event 3 (Startup Networking, FREE) ────────
+('00000005-0000-0000-0000-000000000023',
+ '00000004-0000-0000-0000-000000000023',
+ '00000002-0000-0000-0000-000000000001',
+ '00000003-0000-0000-0000-000000000003',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000023%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000003%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000001%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000023","eventId":"00000003-0000-0000-0000-000000000003","userId":"00000002-0000-0000-0000-000000000001","issued":1746200000000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '4 weeks'),
+
+('00000005-0000-0000-0000-000000000024',
+ '00000004-0000-0000-0000-000000000024',
+ '00000002-0000-0000-0000-000000000003',
+ '00000003-0000-0000-0000-000000000003',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000024%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000003%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000003%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000024","eventId":"00000003-0000-0000-0000-000000000003","userId":"00000002-0000-0000-0000-000000000003","issued":1746200001000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '3 weeks'),
+
+('00000005-0000-0000-0000-000000000025',
+ '00000004-0000-0000-0000-000000000025',
+ '00000002-0000-0000-0000-000000000004',
+ '00000003-0000-0000-0000-000000000003',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000025%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000003%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000004%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000025","eventId":"00000003-0000-0000-0000-000000000003","userId":"00000002-0000-0000-0000-000000000004","issued":1746200002000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '3 weeks'),
+
+('00000005-0000-0000-0000-000000000026',
+ '00000004-0000-0000-0000-000000000026',
+ '00000002-0000-0000-0000-000000000005',
+ '00000003-0000-0000-0000-000000000003',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000026%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000003%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000005%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000026","eventId":"00000003-0000-0000-0000-000000000003","userId":"00000002-0000-0000-0000-000000000005","issued":1746200003000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '2 weeks'),
+
+('00000005-0000-0000-0000-000000000027',
+ '00000004-0000-0000-0000-000000000027',
+ '00000002-0000-0000-0000-000000000006',
+ '00000003-0000-0000-0000-000000000003',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000027%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000003%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000006%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000027","eventId":"00000003-0000-0000-0000-000000000003","userId":"00000002-0000-0000-0000-000000000006","issued":1746200004000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '2 weeks'),
+
+('00000005-0000-0000-0000-000000000028',
+ '00000004-0000-0000-0000-000000000028',
+ '00000002-0000-0000-0000-000000000008',
+ '00000003-0000-0000-0000-000000000003',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000028%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000003%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000008%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000028","eventId":"00000003-0000-0000-0000-000000000003","userId":"00000002-0000-0000-0000-000000000008","issued":1746200005000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '10 days'),
+
+-- ── VALID tickets: Event 4 (UI/UX Workshop) ──────────────────
+('00000005-0000-0000-0000-000000000029',
+ '00000004-0000-0000-0000-000000000029',
+ '00000002-0000-0000-0000-000000000002',
+ '00000003-0000-0000-0000-000000000004',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000029%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000004%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000002%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000029","eventId":"00000003-0000-0000-0000-000000000004","userId":"00000002-0000-0000-0000-000000000002","issued":1746300000000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '3 weeks'),
+
+('00000005-0000-0000-0000-000000000030',
+ '00000004-0000-0000-0000-000000000030',
+ '00000002-0000-0000-0000-000000000007',
+ '00000003-0000-0000-0000-000000000004',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000030%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000004%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000007%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000030","eventId":"00000003-0000-0000-0000-000000000004","userId":"00000002-0000-0000-0000-000000000007","issued":1746300001000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '2 weeks'),
+
+('00000005-0000-0000-0000-000000000031',
+ '00000004-0000-0000-0000-000000000031',
+ '00000002-0000-0000-0000-000000000008',
+ '00000003-0000-0000-0000-000000000004',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000031%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000004%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000008%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000031","eventId":"00000003-0000-0000-0000-000000000004","userId":"00000002-0000-0000-0000-000000000008","issued":1746300002000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '10 days'),
+
+-- ── VALID tickets: Event 5 (Business Leadership) ─────────────
+('00000005-0000-0000-0000-000000000032',
+ '00000004-0000-0000-0000-000000000032',
+ '00000002-0000-0000-0000-000000000001',
+ '00000003-0000-0000-0000-000000000005',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000032%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000005%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000001%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000032","eventId":"00000003-0000-0000-0000-000000000005","userId":"00000002-0000-0000-0000-000000000001","issued":1746400000000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '5 weeks'),
+
+('00000005-0000-0000-0000-000000000033',
+ '00000004-0000-0000-0000-000000000033',
+ '00000002-0000-0000-0000-000000000004',
+ '00000003-0000-0000-0000-000000000005',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000033%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000005%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000004%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000033","eventId":"00000003-0000-0000-0000-000000000005","userId":"00000002-0000-0000-0000-000000000004","issued":1746400001000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '4 weeks'),
+
+-- ── VALID tickets: Event 6 (Music Festival) ──────────────────
+('00000005-0000-0000-0000-000000000034',
+ '00000004-0000-0000-0000-000000000034',
+ '00000002-0000-0000-0000-000000000002',
+ '00000003-0000-0000-0000-000000000006',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000034%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000006%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000002%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000034","eventId":"00000003-0000-0000-0000-000000000006","userId":"00000002-0000-0000-0000-000000000002","issued":1746500000000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '6 weeks'),
+
+('00000005-0000-0000-0000-000000000035',
+ '00000004-0000-0000-0000-000000000035',
+ '00000002-0000-0000-0000-000000000005',
+ '00000003-0000-0000-0000-000000000006',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000035%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000006%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000005%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000035","eventId":"00000003-0000-0000-0000-000000000006","userId":"00000002-0000-0000-0000-000000000005","issued":1746500001000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '5 weeks'),
+
+('00000005-0000-0000-0000-000000000036',
+ '00000004-0000-0000-0000-000000000036',
+ '00000002-0000-0000-0000-000000000006',
+ '00000003-0000-0000-0000-000000000006',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000036%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000006%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000006%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000036","eventId":"00000003-0000-0000-0000-000000000006","userId":"00000002-0000-0000-0000-000000000006","issued":1746500002000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '4 weeks'),
+
+('00000005-0000-0000-0000-000000000037',
+ '00000004-0000-0000-0000-000000000037',
+ '00000002-0000-0000-0000-000000000007',
+ '00000003-0000-0000-0000-000000000006',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000037%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000006%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000007%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000037","eventId":"00000003-0000-0000-0000-000000000006","userId":"00000002-0000-0000-0000-000000000007","issued":1746500003000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '3 weeks'),
+
+-- ── VALID tickets: Event 7 (React Bootcamp) ──────────────────
+('00000005-0000-0000-0000-000000000038',
+ '00000004-0000-0000-0000-000000000038',
+ '00000002-0000-0000-0000-000000000003',
+ '00000003-0000-0000-0000-000000000007',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000038%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000007%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000003%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000038","eventId":"00000003-0000-0000-0000-000000000007","userId":"00000002-0000-0000-0000-000000000003","issued":1746600000000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '4 weeks'),
+
+('00000005-0000-0000-0000-000000000039',
+ '00000004-0000-0000-0000-000000000039',
+ '00000002-0000-0000-0000-000000000004',
+ '00000003-0000-0000-0000-000000000007',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000039%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000007%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000004%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000039","eventId":"00000003-0000-0000-0000-000000000007","userId":"00000002-0000-0000-0000-000000000004","issued":1746600001000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '3 weeks'),
+
+('00000005-0000-0000-0000-000000000040',
+ '00000004-0000-0000-0000-000000000040',
+ '00000002-0000-0000-0000-000000000008',
+ '00000003-0000-0000-0000-000000000007',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000040%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000007%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000008%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000040","eventId":"00000003-0000-0000-0000-000000000007","userId":"00000002-0000-0000-0000-000000000008","issued":1746600002000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '2 weeks'),
+
+-- ── VALID tickets: Event 10 (Photography) ────────────────────
+('00000005-0000-0000-0000-000000000041',
+ '00000004-0000-0000-0000-000000000041',
+ '00000002-0000-0000-0000-000000000002',
+ '00000003-0000-0000-0000-000000000010',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000041%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000010%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000002%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000041","eventId":"00000003-0000-0000-0000-000000000010","userId":"00000002-0000-0000-0000-000000000002","issued":1746700000000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '2 weeks'),
+
+('00000005-0000-0000-0000-000000000042',
+ '00000004-0000-0000-0000-000000000042',
+ '00000002-0000-0000-0000-000000000006',
+ '00000003-0000-0000-0000-000000000010',
+ 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=%7B%22ticketId%22%3A%2200000005-0000-0000-0000-000000000042%22%2C%22eventId%22%3A%2200000003-0000-0000-0000-000000000010%22%2C%22userId%22%3A%2200000002-0000-0000-0000-000000000006%22%7D',
+ '{"ticketId":"00000005-0000-0000-0000-000000000042","eventId":"00000003-0000-0000-0000-000000000010","userId":"00000002-0000-0000-0000-000000000006","issued":1746700001000}',
+ 'valid', NULL, NULL, NOW()-INTERVAL '10 days');
+
+-- ============================================================
+-- STEP 6: VERIFY — expected counts
+-- ============================================================
+SELECT 'users' AS table_name, COUNT(*) AS count FROM users
+UNION ALL SELECT 'events', COUNT(*) FROM events
+UNION ALL SELECT 'registrations', COUNT(*) FROM registrations
+UNION ALL SELECT 'tickets', COUNT(*) FROM tickets
+UNION ALL SELECT 'used_tickets', COUNT(*) FROM tickets WHERE status = 'used'
+UNION ALL SELECT 'valid_tickets', COUNT(*) FROM tickets WHERE status = 'valid';
+
+-- Expected: users=10, events=10, registrations=42, tickets=42, used=13, valid=29
+
+-- ============================================================
+-- DEMO LOGINS (all password: 123456)
+-- ============================================================
+-- ADMIN 1:  harshit@eventhub.com   / 123456  (has 10 events, 42 regs)
+-- ADMIN 2:  admin@eventhub.com     / 123456
+-- USER 1:   arjun@gmail.com        / 123456  (5 events registered)
+-- USER 2:   sneha@gmail.com        / 123456  (7 events registered)
+-- USER 3:   rohan@gmail.com        / 123456  (5 events registered)
+-- USER 4:   ananya@gmail.com       / 123456  (5 events registered)
+-- USER 5:   vikram@gmail.com       / 123456  (5 events registered)
+-- USER 6:   kavya@gmail.com        / 123456  (6 events registered)
+-- USER 7:   aditya@gmail.com       / 123456  (5 events registered)
+-- USER 8:   ishaan@gmail.com       / 123456  (5 events registered)
+
+-- ============================================================
+-- QR SCANNER DEMO — Manual Entry (use Admin Scanner page)
+-- Select event first, then paste qr_data into Manual Entry
+-- ============================================================
+
+-- 1. Cloud Summit (completed) → select "Cloud Summit & DevOps Summit"
+--    Ticket 001 (Arjun — will show ALREADY USED):
+-- {"ticketId":"00000005-0000-0000-0000-000000000001","eventId":"00000003-0000-0000-0000-000000000008","userId":"00000002-0000-0000-0000-000000000001","issued":1747000000000}
+
+-- 2. Tech Summit (upcoming) → select "Tech Summit 2025"
+--    Ticket 014 (Arjun — will show CHECK-IN SUCCESS):
+-- {"ticketId":"00000005-0000-0000-0000-000000000014","eventId":"00000003-0000-0000-0000-000000000001","userId":"00000002-0000-0000-0000-000000000001","issued":1746000000000}
+
+-- 3. Startup Networking (upcoming, FREE) → select "Startup Networking Night"
+--    Ticket 023 (Arjun — will show CHECK-IN SUCCESS):
+-- {"ticketId":"00000005-0000-0000-0000-000000000023","eventId":"00000003-0000-0000-0000-000000000003","userId":"00000002-0000-0000-0000-000000000001","issued":1746200000000}

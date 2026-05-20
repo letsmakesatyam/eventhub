@@ -1,103 +1,105 @@
-# EventHub Frontend
+# EventHub — Frontend
 
-Modern React SaaS frontend for the EventHub Event Registration & Ticketing Platform.
+React + Vite frontend for the EventHub platform. Covers public event discovery, user registration and ticketing flow, and an admin dashboard for event management.
 
-## Tech Stack
-- **Framework**: React 18 + Vite
-- **Styling**: Tailwind CSS + custom design system
-- **Routing**: React Router v6
-- **HTTP**: Axios with retry + server-wake detection
-- **Icons**: Lucide React
-- **Dates**: date-fns
-- **QR Scanner**: html5-qrcode
+## Tech
 
-## Quick Start
+- **React 18** with functional components throughout
+- **Vite** for dev server and builds
+- **Tailwind CSS** with a custom design system (CSS variables for theming, dark mode via `.dark` class)
+- **React Router v6** with `HashRouter` (so it works on Vercel without needing rewrites)
+- **Axios** with a custom retry wrapper that handles Render cold starts
+- **Lucide React** for icons
+- **html5-qrcode** for camera-based QR scanning in the admin scanner page
+
+## Setup
 
 ```bash
-cd frontend
 npm install
-cp .env.example .env     # fill in your backend URL and Razorpay key
+cp .env.example .env
 npm run dev
 ```
 
-## Environment Variables
+## Environment variables
 
 | Variable | Description |
 |---|---|
-| `VITE_API_URL` | Backend API URL (e.g. `https://your-api.onrender.com`) |
-| `VITE_RAZORPAY_KEY_ID` | Razorpay test key ID |
+| `VITE_API_URL` | Backend API base URL |
+| `VITE_RAZORPAY_KEY_ID` | Razorpay key ID for the checkout modal |
 
-## Folder Structure
+## Pages
+
+**Public**
+- `/` — landing page
+- `/events` — browse events, filter by category
+- `/events/:id` — event detail with registration / Razorpay checkout button
+
+**Auth**
+- `/login`
+- `/register`
+- `/register-admin` — creates an admin account directly
+
+**User (requires login)**
+- `/my-tickets` — list of registered tickets with QR code display
+
+**Admin (requires admin role)**
+- `/admin` — dashboard with summary stats and quick links
+- `/admin/events` — create, edit, delete events via a modal form
+- `/admin/scanner` — validate tickets by camera scan or manual QR data entry
+- `/admin/revenue` — revenue breakdown by event
+- `/admin/attendees/:eventId` — attendees for a specific event
+- `/admin/users` — view registered users, create new admin accounts
+
+## A few implementation notes
+
+**Render cold start handling** — The backend on Render's free plan goes to sleep after inactivity. `useServerStatus.js` detects this by watching for network errors, shows a "server is waking up" banner, and retries with exponential backoff (up to 10 attempts, max 15s between retries). This way the UI never just breaks.
+
+**Dark mode** — Uses Tailwind's class strategy (`darkMode: 'class'`). A `ThemeProvider` toggles `.dark` on the `<html>` element and persists the preference to localStorage. All components use `dark:` variants explicitly.
+
+**Payment flow** — The `EventDetailPage` calls the backend to create a Razorpay order, opens the Razorpay JS checkout modal, then sends the payment signature to `/api/payments/verify` for server-side validation before a ticket is issued.
+
+**QR scanner** — `html5-qrcode` is loaded lazily (dynamic import) to avoid bundling it when not needed. The scanner page requires selecting an event first; the event ID is sent alongside the QR data to the validate endpoint so a ticket can't accidentally be checked in for the wrong event.
+
+**Protected routes** — `ProtectedRoute` reads from `AuthContext`. Admin routes additionally check `user.role === 'admin'` and redirect to `/` if not met.
+
+## Project structure
 
 ```
 src/
-├── App.jsx                   # Router, layout, protected routes
-├── main.jsx                  # Entry point
-├── index.css                 # Global styles + Tailwind + design tokens
+├── App.jsx                    routes, layout, ProtectedRoute
+├── index.css                  global styles, Tailwind base, dark mode tokens
 ├── lib/
-│   └── api.js                # Axios client, all API functions, retry logic
+│   └── api.js                 Axios instance + all API call functions
 ├── context/
-│   ├── AuthContext.jsx        # Auth state (login/logout/register)
-│   └── ToastContext.jsx       # Toast notification system
+│   ├── AuthContext.jsx         login / logout / register state
+│   ├── ThemeContext.jsx        dark/light toggle
+│   └── ToastContext.jsx        toast notification queue
 ├── hooks/
-│   └── useServerStatus.js    # Backend wake detection + auto-retry
+│   └── useServerStatus.js     backend wake detection
 ├── components/
-│   ├── ui/
-│   │   ├── Navbar.jsx         # Sticky nav with auth state
-│   │   └── ServerStatusBanner.jsx  # "Server waking up" banner
-│   └── events/
-│       └── EventCard.jsx      # Event card + skeleton loader
+│   ├── ui/Navbar.jsx
+│   ├── ui/ServerStatusBanner.jsx
+│   └── events/EventCard.jsx
 └── pages/
-    ├── HomePage.jsx           # Landing page
-    ├── EventsPage.jsx         # Browse & filter events
-    ├── EventDetailPage.jsx    # Event detail + Razorpay checkout
-    ├── AuthPages.jsx          # Login + Register
-    ├── MyTicketsPage.jsx      # User's tickets with QR display
+    ├── HomePage.jsx
+    ├── EventsPage.jsx
+    ├── EventDetailPage.jsx
+    ├── AuthPages.jsx           LoginPage, RegisterPage, AdminRegisterPage
+    ├── MyTicketsPage.jsx
     └── admin/
-        ├── AdminDashboardPage.jsx   # Stats overview
-        ├── AdminEventsPage.jsx      # CRUD events
-        ├── AdminScannerPage.jsx     # QR scan validation
-        ├── AdminRevenuePage.jsx     # Revenue by event
-        └── AdminAttendeesPage.jsx   # Attendee list + CSV export
+        ├── AdminDashboardPage.jsx
+        ├── AdminEventsPage.jsx
+        ├── AdminScannerPage.jsx
+        ├── AdminRevenuePage.jsx
+        ├── AdminAttendeesPage.jsx
+        └── AdminUsersPage.jsx
 ```
 
-## Key Features
-
-### Backend Resilience (Render Cold Start)
-When the backend is sleeping (Render free tier), the app:
-1. Detects the connection failure
-2. Shows "Server is waking up, please wait..." banner
-3. Auto-retries with exponential backoff (up to 10 attempts)
-4. Restores normal UI when server responds
-
-### Payment Flow
-1. User clicks "Register Now"
-2. Backend creates Razorpay order
-3. Razorpay checkout modal opens
-4. User completes payment
-5. Backend verifies signature
-6. Ticket + QR code generated
-7. User redirected to My Tickets
-
-### Admin Features
-- Dashboard with KPI stats
-- Full event CRUD with modal form
-- QR scanner (camera + manual entry)
-- Revenue report by event
-- Attendee list with CSV export
-
-## Deploy to Vercel
+## Build & deploy
 
 ```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# From frontend/ directory
-vercel
-
-# Set environment variables in Vercel dashboard:
-# VITE_API_URL = https://your-api.onrender.com
-# VITE_RAZORPAY_KEY_ID = rzp_test_...
+npm run build     # outputs to dist/
+npm run preview   # preview the production build locally
 ```
 
-Or push to GitHub and import project in Vercel dashboard.
+For Vercel: import the repo, set root directory to `frontend/`, framework preset to Vite, and add the two env variables. That's it.

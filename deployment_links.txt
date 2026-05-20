@@ -1,0 +1,57 @@
+EventHub — Deployment Links
+============================
+
+Frontend (Live):
+https://eventhub-82tl.onrender.com/
+
+Backend API (Live):
+https://eventhub-backend-2lfd.onrender.com/
+
+Backend Health Check:
+https://eventhub-backend-2lfd.onrender.com/api/health
+
+-----------------------------
+Demo Credentials (all passwords: 123456)
+-----------------------------
+
+Admin login:
+  Email    : harshit@eventhub.com
+  Password : 123456
+
+Admin 2:
+  Email    : admin@eventhub.com
+  Password : 123456
+
+User logins:
+  arjun@gmail.com   / 123456
+  sneha@gmail.com   / 123456
+  rohan@gmail.com   / 123456
+  ananya@gmail.com  / 123456
+  vikram@gmail.com  / 123456
+  kavya@gmail.com   / 123456
+  aditya@gmail.com  / 123456
+  ishaan@gmail.com  / 123456
+
+-----------------------------
+Razorpay Test Card (for payment demo)
+-----------------------------
+  Card Number : 4111 1111 1111 1111
+  Expiry      : Any future date (e.g. 12/26)
+  CVV         : Any 3 digits (e.g. 123)
+  OTP         : 1234
+
+-----------------------------
+Key Routes
+-----------------------------
+  /              Home page
+  /events        Browse all events
+  /events/:id    Event detail + register/pay
+  /login         Login
+  /register      Register as user
+  /register-admin   Register as admin
+  /my-tickets    My tickets with QR codes (login required)
+  /admin         Admin dashboard (admin only)
+  /admin/events  Manage events
+  /admin/scanner QR ticket scanner
+  /admin/revenue Revenue analytics
+  /admin/users   User management
